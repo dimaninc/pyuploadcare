@@ -4,6 +4,8 @@ import logging
 import requests
 
 
+DEFAULT_SLEEP = 0.1
+DEFAULT_TIMEOUT = 30
 logger = logging.getLogger("pyuploadcare")
 
 
@@ -40,7 +42,7 @@ class File(object):
         logger.warn("keep() is deprecated, use store() instead")
         return self.store(**kwargs)
 
-    def store(self, wait=False, timeout=5):
+    def store(self, wait=False, timeout=DEFAULT_TIMEOUT):
         self.ucare.make_request('PUT', self.storage_uri)
 
         if wait:
@@ -49,11 +51,11 @@ class File(object):
                 if time.time() - time_started > timeout:
                     raise Exception('timed out trying to store')
                 self.update_info()
-                time.sleep(0.1)
-            self.ensure_on_cdn()
+                time.sleep(DEFAULT_SLEEP)
+            self.ensure_on_cdn(timeout=timeout + time_started - time.time())
         self.update_info()
 
-    def delete(self, wait=False, timeout=5):
+    def delete(self, wait=False, timeout=DEFAULT_TIMEOUT):
         self.ucare.make_request('DELETE', self.api_uri)
 
         if wait:
@@ -62,18 +64,18 @@ class File(object):
                 if time.time() - time_started > timeout:
                     raise Exception('timed out trying to delete')
                 self.update_info()
-                time.sleep(0.1)
+                time.sleep(DEFAULT_SLEEP)
         self.update_info()
 
-    def ensure_on_s3(self, timeout=5):
+    def ensure_on_s3(self, timeout=DEFAULT_TIMEOUT):
         time_started = time.time()
         while not self.is_on_s3:
             if time.time() - time_started > timeout:
                 raise Exception('timed out waiting for uploading to s3')
             self.update_info()
-            time.sleep(0.1)
+            time.sleep(DEFAULT_SLEEP)
 
-    def ensure_on_cdn(self, timeout=5):
+    def ensure_on_cdn(self, timeout=DEFAULT_TIMEOUT):
         if not self.is_on_s3:
             raise Exception('file is not on s3 yet')
         if not self.is_stored:
@@ -86,7 +88,7 @@ class File(object):
             if resp.status_code == 200:
                 return
             logger.debug(resp)
-            time.sleep(0.1)
+            time.sleep(DEFAULT_SLEEP)
 
     @property
     def info(self):

@@ -1,4 +1,4 @@
-__version__ = (0, 14)
+__version__ = (0, 16)
 
 import email.utils
 import hashlib

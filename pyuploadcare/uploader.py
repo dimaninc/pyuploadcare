@@ -3,7 +3,7 @@ from urlparse import urljoin
 
 import requests
 
-from pyuploadcare.file import File
+from pyuploadcare.file import File, DEFAULT_TIMEOUT, DEFAULT_SLEEP
 
 
 class UploaderException(Exception):
@@ -23,7 +23,7 @@ class UploadedFile(object):
     def update_status(self):
         self.status, self.data = self.uploader.get_status(self.token)
 
-    def wait(self, timeout=30):
+    def wait(self, timeout=DEFAULT_TIMEOUT):
         """Wait for upload to complete for `timeout` seconds"""
         time_started = time.time()
         while True:
@@ -34,7 +34,7 @@ class UploadedFile(object):
                 break
             if self.status in ('failed', 'error'):
                 return False
-            time.sleep(0.1)
+            time.sleep(DEFAULT_SLEEP)
 
         f = self.get_file()
         if f is None:
@@ -54,7 +54,7 @@ class UploadedFile(object):
 
 
 class UploaderMixin(object):
-    def upload_from_url(self, url, wait=False, timeout=30):
+    def upload_from_url(self, url, wait=False, timeout=DEFAULT_TIMEOUT):
         """Upload file from given URL
 
         Return UploadedFile instance.
@@ -103,7 +103,7 @@ class UploaderMixin(object):
 
         return data['status'], data
 
-    def upload(self, filename, wait=False, timeout=30):
+    def upload(self, filename, wait=False, timeout=DEFAULT_TIMEOUT):
         with open(filename) as f:
             response = requests.post(
                 urljoin(self.upload_base, 'base/'),
