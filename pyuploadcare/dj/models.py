@@ -54,5 +54,6 @@ class ImageField(FileField):
     def __init__(self, **kwargs):
         self.custom_attrs = dict(self.custom_attrs)
         self.custom_attrs['data-images-only'] = ""
+        self.custom_attrs['data-crop'] = kwargs.pop('crop', '')
         super(ImageField, self).__init__(**kwargs)
 
