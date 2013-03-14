@@ -32,3 +32,10 @@ class FileWidget(TextInput):
 
 class FileField(Field):
     widget = FileWidget
+
+    def __init__(self, **kwargs):
+        self.custom_attrs = kwargs.pop('custom_attrs', {})
+        super(FileField, self).__init__(**kwargs)
+
+    def widget_attrs(self, widget):
+        return self.custom_attrs

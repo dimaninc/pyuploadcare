@@ -10,6 +10,8 @@ class FileField(models.Field):
 
     description = "UploadCare file id/URI with cached data"
 
+    custom_attrs = {}
+
     def get_internal_type(self):
         return "TextField"
 
@@ -37,8 +39,20 @@ class FileField(models.Field):
         assert False
 
     def formfield(self, **kwargs):
-        defaults = {'widget': forms.FileWidget, 'form_class': forms.FileField}
+        defaults = {'widget': forms.FileWidget,
+                    'form_class': forms.FileField,
+                    'custom_attrs': self.custom_attrs}
         defaults.update(kwargs)
 
         # yay for super!
         return super(FileField, self).formfield(**defaults)
+
+
+
+
+class ImageField(FileField):
+    def __init__(self, **kwargs):
+        self.custom_attrs = dict(self.custom_attrs)
+        self.custom_attrs['data-images-only'] = ""
+        super(ImageField, self).__init__(**kwargs)
+
