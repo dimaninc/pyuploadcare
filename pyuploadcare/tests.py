@@ -268,16 +268,18 @@ class TestFormFields(ModernTestCase):
 
 class TestProcessedFiles(ModernTestCase):
     def test_processed_file_creation(self):
-        f = ProcessedFile('http://ucarecdn.com/3addab78-6368-4c55-ac08-22412b6a2a4c/')
+        ucare = UploadCare('pub', 'secret')
+
+        f = ProcessedFile('http://ucarecdn.com/3addab78-6368-4c55-ac08-22412b6a2a4c/', ucare)
         self.assertEquals(f.url, 'http://ucarecdn.com/3addab78-6368-4c55-ac08-22412b6a2a4c/')
 
-        f = ProcessedFile('http://ucarecdn.com/3addab78-6368-4c55-ac08-22412b6a2a4c/-/crop/200x300/center/')
+        f = ProcessedFile('http://ucarecdn.com/3addab78-6368-4c55-ac08-22412b6a2a4c/-/crop/200x300/center/', ucare)
         self.assertEquals(f.url, 'http://ucarecdn.com/3addab78-6368-4c55-ac08-22412b6a2a4c/-/crop/200x300/center/')
 
-        f = ProcessedFile('3addab78-6368-4c55-ac08-22412b6a2a4c')
+        f = ProcessedFile('3addab78-6368-4c55-ac08-22412b6a2a4c', ucare)
         self.assertEquals(f.url, 'https://ucarecdn.com/3addab78-6368-4c55-ac08-22412b6a2a4c/')
 
         with self._assertRaises(ValueError):
-            ProcessedFile('https://uploadcare-static.s3.amazonaws.com/assets/images/olympia.0939bbb3e820.jpg')
+            ProcessedFile('https://uploadcare-static.s3.amazonaws.com/assets/images/olympia.0939bbb3e820.jpg', ucare)
 
 

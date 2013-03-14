@@ -1,5 +1,7 @@
 import re
 
+from pyuploadcare.file import File
+
 UUID_REGEX_RAW = r'[a-z0-9]{8}-(?:[a-z0-9]{4}-){3}[a-z0-9]{12}'
 CDN_REGEX = re.compile(r'^https?://ucarecdn.com/(?P<file_id>'
                        + UUID_REGEX_RAW + r')/')
@@ -20,11 +22,10 @@ def parse_url_or_uuid(url_or_uuid):
     raise ValueError('Neither URL nor UUID')
 
 
-class ProcessedFile(object):
-    def __init__(self, url_or_uuid):
+class ProcessedFile(File):
+    def __init__(self, url_or_uuid, ucare):
         self.url, self.uuid = parse_url_or_uuid(url_or_uuid)
-
-
+        self.ucare = ucare
 
     def serialize(self):
         return self.url
