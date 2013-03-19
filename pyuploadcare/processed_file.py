@@ -22,11 +22,15 @@ def parse_url_or_uuid(url_or_uuid):
     raise ValueError('Neither URL nor UUID')
 
 
-class ProcessedFile(File):
+class ProcessedFile(object):
     def __init__(self, url_or_uuid, ucare):
         self.url, self.uuid = parse_url_or_uuid(url_or_uuid)
         self.ucare = ucare
 
     def serialize(self):
         return self.url
+
+    def as_uc_file(self):
+        return ucare.file(self.uuid)
+
 
